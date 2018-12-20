@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Tradeio.Stellar.Data;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
+using Tradeio.Balance;
+using Tradeio.Email;
 using Tradeio.Stellar.Configuration;
 using Tradeio.Stellar.Deposit.Controllers;
-using Tradeio.Stellar.Interfaces;
 
 namespace Tradeio.Stellar.Deposit
 {
@@ -23,12 +25,19 @@ namespace Tradeio.Stellar.Deposit
             services.AddMvc();
             services.AddSwagger();
 
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IBalanceService, BalanceService>();
+
             services.AddTransient<IStellarConfigurationService, StellarConfigurationService>();
-            services.AddTransient<IDepositAddressService, DepositAddressService>();
-            services.AddTransient<IAddressController, DepositsControllerInternal>();
+            services.AddTransient<IStellarRepository, StellarRepository>();
+
+            services.AddTransient<IDepositsController, DepositsControllerInternal>();
+            services.AddTransient<IStatusController, StatusControllerInternal>();
+
+            services.AddSingleton<DepositProcessor>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -46,6 +55,11 @@ namespace Tradeio.Stellar.Deposit
             });
 
             app.UseSwaggerReDocWithApiExplorer(settings => settings.SwaggerUiRoute = "/docs");
+
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                app.ApplicationServices.GetService<DepositProcessor>().Start();
+            });
         }
     }
 }

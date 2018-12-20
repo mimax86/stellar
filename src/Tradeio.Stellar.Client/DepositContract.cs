@@ -47,11 +47,14 @@ namespace Tradeio.Stellar.Deposit.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.11.0.0 (Newtonsoft.Json v9.0.0.0)")]
     public partial class DepositAddressModel 
     {
+        [Newtonsoft.Json.JsonProperty("TraderId", Required = Newtonsoft.Json.Required.Always)]
+        public long TraderId { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("Address", Required = Newtonsoft.Json.Required.Always)]
         public string Address { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("TraderId", Required = Newtonsoft.Json.Required.Always)]
-        public int TraderId { get; set; }
+        [Newtonsoft.Json.JsonProperty("CustomerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CustomerId { get; set; }
     
     
     }

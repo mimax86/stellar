@@ -11,9 +11,11 @@ namespace Tradeio.Stellar.Configuration
             _settings = configuration.GetSection("stellar").Get<StellarSettings>();
         }
 
-        public string Server => _settings.Server;
+        public string HorizonUrl => _settings.HorizonUrl;
 
-        public string Seed => _settings.Seed;
+        public WalletSettings Hot => _settings.Hot;
+
+        public WalletSettings Cold => _settings.Cold;
 
         public decimal Fee => _settings.Fee;
     }

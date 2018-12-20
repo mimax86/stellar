@@ -66,11 +66,16 @@
         "TraderId"
       ],
       "properties": {
+        "TraderId": {
+          "type": "integer",
+          "format": "int64"
+        },
         "Address": {
           "type": "string"
         },
-        "TraderId": {
-          "type": "integer"
+        "CustomerId":
+        {
+          "type": "string"
         }
       }
     },

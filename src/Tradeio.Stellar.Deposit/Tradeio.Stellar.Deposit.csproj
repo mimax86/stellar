@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Tradeio.Stellar.Data\Tradeio.Stellar.Data.csproj" />
     <ProjectReference Include="..\Tradeio.Stellar\Tradeio.Stellar.csproj" />
   </ItemGroup>
 

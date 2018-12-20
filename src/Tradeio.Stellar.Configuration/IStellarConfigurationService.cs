@@ -2,9 +2,11 @@
 {
     public interface IStellarConfigurationService
     {
-        string Server { get; }
+        string HorizonUrl { get; }
 
-        string Seed { get; }
+        WalletSettings Hot { get; }
+
+        WalletSettings Cold { get; }
 
         decimal Fee { get; }
     }
