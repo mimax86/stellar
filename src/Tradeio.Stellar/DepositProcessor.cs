@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Text;
 using Tradeio.Stellar.Data;
-using stellar_dotnet_sdk;
 using stellar_dotnet_sdk.responses.operations;
 using Tradeio.Balance;
 using Tradeio.Email;
@@ -12,58 +10,58 @@ namespace Tradeio.Stellar
     public class DepositProcessor : IDisposable
     {
         private readonly IStellarConfigurationService _stellarConfigurationService;
+        private readonly IStellarClient _stellarClient;
         private readonly IStellarRepository _stellarRepository;
         private readonly IBalanceService _balanceService;
         private readonly IEmailService _emailService;
-        private readonly Server _server;
 
         public DepositProcessor(
             IStellarConfigurationService stellarConfigurationService,
+            IStellarClient stellarClient,
             IStellarRepository stellarRepository,
             IBalanceService balanceService,
             IEmailService emailService)
         {
             _stellarConfigurationService = stellarConfigurationService;
+            _stellarClient = stellarClient;
             _stellarRepository = stellarRepository;
             _balanceService = balanceService;
             _emailService = emailService;
-            _server = new Server(stellarConfigurationService.HorizonUrl);
         }
 
         public void Start()
         {
-            var builder =
-                _server.Operations.ForAccount(
-                    KeyPair.FromPublicKey(Encoding.Unicode.GetBytes(_stellarConfigurationService.Hot.Public)));
+            var account = _stellarConfigurationService.Hot.Public;
 
             var lastCursor = _stellarRepository.GetLastCursorAsync().Result;
-            if (!string.IsNullOrEmpty(lastCursor))
-                builder.Cursor(lastCursor);
 
-            builder.Stream(HandlePayment).Connect();
-        }
-
-        private void HandlePayment(object sender, OperationResponse e)
-        {
-            if (!(e is PaymentOperationResponse payment))
-                return;
-            var transaction = _server.Transactions.Transaction(payment.TransactionHash).Result;
-            var custometId = transaction.MemoStr;
-
-            var traderAddress = _stellarRepository.GetTraderAddressByCustomerIdAsync(custometId).Result;
-            if (traderAddress != null)
+            _stellarClient.ListenAccountOperations(account, lastCursor, (sender, response) =>
             {
-                _stellarRepository.CreateTransactionAsync(traderAddress, payment.Amount);
-                _stellarRepository.AddCursorAsync(e.PagingToken);
+                if (!(response is PaymentOperationResponse payment))
+                    return;
 
-                _balanceService.Change(traderAddress.TraderId, Convert.ToDecimal(payment.Amount), payment.AssetCode);
-                _emailService.Send(new EmailParameters( /*some email parameters*/));
-            }
+                var transaction = _stellarClient.GetTransaction(payment.TransactionHash).Result;
+
+                var custometId = transaction.MemoStr;
+
+                var traderAddress = _stellarRepository.GetTraderAddressByCustomerIdAsync(custometId).Result;
+                if (traderAddress != null)
+                {
+                    _stellarRepository.CreateTransactionAsync(traderAddress, payment.Amount);
+                    _stellarRepository.AddCursorAsync(response.PagingToken);
+                    _balanceService.Change(traderAddress.TraderId, Convert.ToDecimal(payment.Amount),
+                        payment.AssetCode);
+                }
+                else
+                {
+                    _emailService.Send(new EmailParameters( /*notify got unregistered trader deposit*/));
+                }
+            });
         }
 
         public void Dispose()
         {
-            _server?.Dispose();
+            _stellarClient?.Dispose();
         }
     }
 }
