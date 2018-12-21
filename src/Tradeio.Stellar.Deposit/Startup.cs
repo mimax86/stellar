@@ -8,6 +8,7 @@ using Tradeio.Balance;
 using Tradeio.Email;
 using Tradeio.Stellar.Configuration;
 using Tradeio.Stellar.Deposit.Controllers;
+using Tradeio.Stellar.Processors;
 
 namespace Tradeio.Stellar.Deposit
 {
@@ -35,6 +36,7 @@ namespace Tradeio.Stellar.Deposit
             services.AddTransient<IStatusController, StatusControllerInternal>();
 
             services.AddSingleton<DepositProcessor>();
+            services.AddSingleton<ReallocationProcessor>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
@@ -59,6 +61,7 @@ namespace Tradeio.Stellar.Deposit
             lifetime.ApplicationStarted.Register(() =>
             {
                 app.ApplicationServices.GetService<DepositProcessor>().Start();
+                app.ApplicationServices.GetService<ReallocationProcessor>().Start();
             });
         }
     }

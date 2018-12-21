@@ -8,12 +8,13 @@ namespace Tradeio.Stellar.Deposit.Controllers
 {
     public class DepositsControllerInternal : IDepositsController
     {
-        private readonly StellarSettings _stellarSettings;
+        private readonly IStellarConfigurationService _stellarConfigurationService;
         private readonly IStellarRepository _stellarRepository;
 
-        public DepositsControllerInternal(StellarSettings stellarSettings, IStellarRepository stellarRepository)
+        public DepositsControllerInternal(IStellarConfigurationService stellarConfigurationService,
+            IStellarRepository stellarRepository)
         {
-            _stellarSettings = stellarSettings;
+            _stellarConfigurationService = stellarConfigurationService;
             _stellarRepository = stellarRepository;
         }
 
@@ -28,14 +29,13 @@ namespace Tradeio.Stellar.Deposit.Controllers
                     CustomerId = Guid.NewGuid().ToString("N")
                 };
                 await _stellarRepository.AddTraderAddressAsync(traderAddress);
-
             }
 
             return new DepositAddressModel
             {
                 TraderId = traderId,
                 CustomerId = traderAddress.CustomerId,
-                Address = _stellarSettings.Hot.Public
+                Address = _stellarConfigurationService.Hot.Public
             };
         }
     }

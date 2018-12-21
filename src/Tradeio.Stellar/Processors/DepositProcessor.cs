@@ -1,11 +1,11 @@
 ﻿using System;
-using Tradeio.Stellar.Data;
 using stellar_dotnet_sdk.responses.operations;
 using Tradeio.Balance;
 using Tradeio.Email;
 using Tradeio.Stellar.Configuration;
+using Tradeio.Stellar.Data;
 
-namespace Tradeio.Stellar
+namespace Tradeio.Stellar.Processors
 {
     public class DepositProcessor : IDisposable
     {
@@ -47,9 +47,10 @@ namespace Tradeio.Stellar
                 var traderAddress = _stellarRepository.GetTraderAddressByCustomerIdAsync(custometId).Result;
                 if (traderAddress != null)
                 {
-                    _stellarRepository.CreateTransactionAsync(traderAddress, payment.Amount);
+                    var amount = Convert.ToDecimal(payment.Amount);
+                    _stellarRepository.CreateTransactionAsync(traderAddress, amount);
                     _stellarRepository.AddCursorAsync(response.PagingToken);
-                    _balanceService.Change(traderAddress.TraderId, Convert.ToDecimal(payment.Amount),
+                    _balanceService.Deposit(traderAddress.TraderId, Convert.ToDecimal(amount),
                         payment.AssetCode);
                 }
                 else

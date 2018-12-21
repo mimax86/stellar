@@ -11,6 +11,7 @@ using Tradeio.Email;
 using Tradeio.Stellar.Configuration;
 using Tradeio.Stellar.Data;
 using Tradeio.Stellar.Data.Model;
+using Tradeio.Stellar.Processors;
 
 namespace Tradeio.Stellar.Tests
 {
@@ -54,13 +55,37 @@ namespace Tradeio.Stellar.Tests
         }
 
         [Test]
-        public void DepositAddressService_Generates_New_Address()
+        public void DepositProcessor_Skips_Not_Payment_Operation()
+        {
+            _depositProcessor.Start();
+            _operationHandler.Invoke(null, GetOffer());
+            _stellarClientMock.Verify(client => client.GetTransaction(It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void DepositProcessor_Sends_Email_If_Trader_Not_Found()
         {
             _depositProcessor.Start();
             _stellarClientMock.Setup(client => client.GetTransaction(It.IsAny<string>()))
                 .Returns(Task.FromResult(GetTransaction()));
             _operationHandler.Invoke(null, GetOperation());
-            _emailServiceMock.Verify(service => );
+            _emailServiceMock.Verify(service => service.Send(It.IsAny<EmailParameters>()), Times.Exactly(1));
+        }
+
+        [Test]
+        public void DepositProcessor_Creates_Transaction_For_Trader_Payment()
+        {
+            var traderAddress = new TraderAddress {CustomerId = "customerID", TraderId = 1};
+
+            _depositProcessor.Start();
+            _stellarClientMock.Setup(client => client.GetTransaction(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetTransaction()));
+            _stellarRepositoryMock.Setup(repository => repository.GetTraderAddressByCustomerIdAsync("customerId"))
+                .Returns(Task.FromResult(traderAddress));
+            _operationHandler.Invoke(null, GetOperation());
+            _stellarRepositoryMock.Verify(repository =>
+                repository.CreateTransactionAsync(It.Is<TraderAddress>(address => address == traderAddress),
+                    It.Is<decimal>(value => value == 10)));
         }
 
         private TransactionResponse GetTransaction()
@@ -72,6 +97,11 @@ namespace Tradeio.Stellar.Tests
         private OperationResponse GetOperation()
         {
             return new PaymentOperationResponse("10", "native", "XML", "issuer", KeyPair.Random(), KeyPair.Random());
+        }
+
+        private AccountMergeOperationResponse GetOffer()
+        {
+            return new AccountMergeOperationResponse(KeyPair.Random(), KeyPair.Random());
         }
     }
 }

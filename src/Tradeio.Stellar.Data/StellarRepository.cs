@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tradeio.Stellar.Data.Model;
 
 namespace Tradeio.Stellar.Data
@@ -20,7 +21,7 @@ namespace Tradeio.Stellar.Data
             throw new System.NotImplementedException();
         }
 
-        public Task CreateTransactionAsync(TraderAddress traderAddress, string paymentAmount)
+        public Task CreateTransactionAsync(TraderAddress traderAddress, decimal amount)
         {
             throw new System.NotImplementedException();
         }
@@ -31,6 +32,16 @@ namespace Tradeio.Stellar.Data
         }
 
         public Task AddCursorAsync(string cursor)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<IReadOnlyCollection<WithdrawalRequest>> GetWithdrawalRequests()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<WithdrawalRequest> AddWithdrawalRequestAsync(long traderId, string address, decimal amount)
         {
             throw new System.NotImplementedException();
         }

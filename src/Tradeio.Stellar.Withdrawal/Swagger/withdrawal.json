@@ -1,0 +1,114 @@
+﻿{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Stellar Withdrawal API",
+    "description": "Processing Stellar withdrawals"
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "localhost",
+  "paths": {
+    "/v1/withdrawal": {
+      "put": {
+        "tags": [
+          "Withdrawals"
+        ],
+        "parameters": [
+          {
+            "name": "TraderId",
+            "in": "query",
+            "description": "Trader identifier",
+            "type": "integer",
+            "format": "int64",
+            "required" : "true"
+          },
+          {
+            "name": "Address",
+            "in": "query",
+            "description": "Withdrawal address",
+            "type": "string",
+            "required" : "true"
+          },
+          {
+            "name": "Amount",
+            "in": "query",
+            "description": "Withdrawal amount",
+            "type": "number",
+            "format": "decimal",
+            "required" : "true"
+          }
+        ],
+        "operationId": "Withdrawals_CreateWithdrawalRequest",
+        "summary": "Create withdrawal request",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Create withdrawal request",
+            "schema": {
+              "$ref": "#/definitions/WithdrawalRequestModel"
+            }
+          }
+        }
+      }
+    },
+    "/v1/status": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "operationId": "Status_Get",
+        "summary": "Get service status",
+        "description": "Returns service status",
+        "responses": {
+          "200": {
+            "description": "Status",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WithdrawalRequestModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Address",
+        "TraderId"
+      ],
+      "properties": {
+        "TraderId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "Amount":
+        {
+          "type": "number",
+          "format": "decimal"
+        }
+      }
+    },
+    "Status": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tradeio.Stellar.Data.Model;
 
 namespace Tradeio.Stellar.Data
@@ -11,10 +12,14 @@ namespace Tradeio.Stellar.Data
 
         Task AddTraderAddressAsync(TraderAddress traderAddress);
 
-        Task CreateTransactionAsync(TraderAddress traderAddress, string paymentAmount);
+        Task CreateTransactionAsync(TraderAddress traderAddress, decimal amount);
 
         Task<string> GetLastCursorAsync();
 
         Task AddCursorAsync(string cursor);
+
+        Task<IReadOnlyCollection<WithdrawalRequest>> GetWithdrawalRequests();
+
+        Task<WithdrawalRequest> AddWithdrawalRequestAsync(long traderId, string address, decimal amount);
     }
 }

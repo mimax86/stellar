@@ -8,6 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NSwag.AspNetCore;
+using Tradeio.Balance;
+using Tradeio.Email;
+using Tradeio.Stellar.Configuration;
+using Tradeio.Stellar.Data;
+using Tradeio.Stellar.Processors;
+using Tradeio.Stellar.Withdrawal.Controllers;
 
 namespace Tradeio.Stellar.Withdrawal
 {
@@ -20,14 +27,24 @@ namespace Tradeio.Stellar.Withdrawal
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSwagger();
+
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IBalanceService, BalanceService>();
+
+            services.AddTransient<IStellarConfigurationService, StellarConfigurationService>();
+            services.AddTransient<IStellarRepository, StellarRepository>();
+
+            services.AddTransient<IWithdrawalsController, WithdrawalsControllerInternal>();
+            services.AddTransient<IStatusController, StatusControllerInternal>();
+
+            services.AddSingleton<WithdrawalProcessor>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -35,6 +52,21 @@ namespace Tradeio.Stellar.Withdrawal
             }
 
             app.UseMvc();
+
+            app.UseSwaggerUi3WithApiExplorer(settings =>
+            {
+                settings.SwaggerUiRoute = "/swagger";
+                settings.GeneratorSettings.Version = "1.0.0";
+                settings.GeneratorSettings.Title = "Stellar Withdrawal API";
+                settings.GeneratorSettings.Description = "";
+            });
+
+            app.UseSwaggerReDocWithApiExplorer(settings => settings.SwaggerUiRoute = "/docs");
+
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                app.ApplicationServices.GetService<WithdrawalProcessor>().Start();
+            });
         }
     }
 }

@@ -2,9 +2,17 @@
 {
     public class BalanceService : IBalanceService
     {
-        public void Change(long traderId, decimal Amount, string Asset)
+        public void Deposit(long traderId, decimal amount, string asset)
         {
-            //Make change in trader balance
+        }
+
+        public void Withdraw(long traderId, decimal amount, string asset)
+        {
+        }
+
+        public decimal GetBalance(long traderId, string asset)
+        {
+            return 0;
         }
     }
 }

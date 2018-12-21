@@ -5,15 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
+    <PackageReference Include="NSwag.AspNetCore" Version="11.20.0" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tradeio.Balance\Tradeio.Balance.csproj" />
+    <ProjectReference Include="..\Tradeio.Email\Tradeio.Email.csproj" />
+    <ProjectReference Include="..\Tradeio.Stellar.Configuration\Tradeio.Stellar.Configuration.csproj" />
+    <ProjectReference Include="..\Tradeio.Stellar.Data\Tradeio.Stellar.Data.csproj" />
+    <ProjectReference Include="..\Tradeio.Stellar\Tradeio.Stellar.csproj" />
   </ItemGroup>
 
 </Project>
