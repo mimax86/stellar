@@ -1,0 +1,93 @@
+﻿{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Stellar Deposit API",
+    "description": "Processing Stellar deposits"
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "localhost",
+  "paths": {
+    "/v1/deposit/trader/address": {
+      "get": {
+        "tags": [
+          "Deposits"
+        ],
+        "parameters": [
+          {
+            "name": "TraderId",
+            "in": "query",
+            "description": "Trader identifier",
+            "type": "integer",
+            "format": "int64",
+            "required" : "true"
+          }
+        ],
+        "operationId": "Deposits_GetTraderAddress",
+        "summary": "Get trader deposit address",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Generates new trader deposit address",
+            "schema": {
+              "$ref": "#/definitions/DepositAddressModel"
+            }
+          }
+        }
+      }
+    },
+    "/v1/status": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "operationId": "Status_Get",
+        "summary": "Get service status",
+        "description": "Returns service status",
+        "responses": {
+          "200": {
+            "description": "Status",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DepositAddressModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Address",
+        "TraderId"
+      ],
+      "properties": {
+        "Address": {
+          "type": "string"
+        },
+        "TraderId": {
+          "type": "integer"
+        }
+      }
+    },
+    "Status": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "current": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}
