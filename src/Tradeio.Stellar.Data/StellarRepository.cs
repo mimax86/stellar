@@ -46,7 +46,7 @@ namespace Tradeio.Stellar.Data
             throw new System.NotImplementedException();
         }
 
-        public Task ChangeWithdrawalRequestStatus(WithdrawalRequest request, WithdrwalRequestStatus status)
+        public Task ChangeWithdrawalRequestStatusAsync(WithdrawalRequest request, WithdrwalRequestStatus status)
         {
             throw new System.NotImplementedException();
         }

@@ -14,6 +14,8 @@ namespace Tradeio.Stellar
 
         Task<decimal> GetHotWalletBalanceAsync();
 
-        Task SubmitPaymentAsync(string destinationAddress, decimal amount);
+        Task<string> SubmitHotWalletWithdrawalAsync(string destinationAddress, decimal amount);
+
+        Task<string> SubmitColdWalletWithdrawalAsync(string destinationAddress, decimal amount, string[] secrets);
     }
 }

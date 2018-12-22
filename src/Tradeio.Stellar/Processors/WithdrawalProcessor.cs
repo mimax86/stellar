@@ -45,7 +45,7 @@ namespace Tradeio.Stellar.Processors
             var pendingWithdrawalRequests = await _stellarRepository.GetPendingWithdrawalRequestsAsync();
             foreach (var request in pendingWithdrawalRequests)
             {
-                await _stellarRepository.ChangeWithdrawalRequestStatus(request, WithdrwalRequestStatus.Processing);
+                await _stellarRepository.ChangeWithdrawalRequestStatusAsync(request, WithdrwalRequestStatus.Processing);
 
                 var balance = _balanceService.GetBalance(request.TraderId, Asset.Lumen);
                 if (balance < request.Amount)
@@ -67,14 +67,14 @@ namespace Tradeio.Stellar.Processors
 
                 try
                 {
-                    await _stellarService.SubmitPaymentAsync(request.Address, request.Amount);
+                    await _stellarService.SubmitHotWalletWithdrawalAsync(request.Address, request.Amount);
                     _balanceService.Withdraw(request.TraderId, request.Amount, Asset.Lumen);
-                    await _stellarRepository.ChangeWithdrawalRequestStatus(request, WithdrwalRequestStatus.Completed);
+                    await _stellarRepository.ChangeWithdrawalRequestStatusAsync(request, WithdrwalRequestStatus.Completed);
                 }
                 catch (Exception e)
                 {
                     _logger.LogCritical("Failure in processing withdrawal", e);
-                    await _stellarRepository.ChangeWithdrawalRequestStatus(request, WithdrwalRequestStatus.Error);
+                    await _stellarRepository.ChangeWithdrawalRequestStatusAsync(request, WithdrwalRequestStatus.Error);
                 }
             }
         }

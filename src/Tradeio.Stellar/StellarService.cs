@@ -15,12 +15,14 @@ namespace Tradeio.Stellar
         private readonly IStellarConfigurationService _stellarConfigurationService;
         private readonly Server _server;
         private readonly KeyPair _hotWallet;
+        private readonly KeyPair _coldWallet;
 
         public StellarService(IStellarConfigurationService stellarConfigurationService)
         {
             _stellarConfigurationService = stellarConfigurationService;
             _server = new Server(stellarConfigurationService.HorizonUrl);
-            _hotWallet = KeyPair.FromPublicKey(Encoding.Unicode.GetBytes(stellarConfigurationService.Hot.Public));
+            _hotWallet = KeyPair.FromSecretSeed(stellarConfigurationService.Hot.Secret);
+            _coldWallet = KeyPair.FromAccountId(stellarConfigurationService.Cold.Public);
         }
 
         public EventHandler<OperationResponse> ListenHotWallet(string cursor,
@@ -43,14 +45,14 @@ namespace Tradeio.Stellar
         {
             var account = await _server.Accounts.Account(_hotWallet);
             var value = account.Balances
-                .FirstOrDefault(balance => balance.AssetCode == Asset.Lumen)?.BalanceString;
+                .FirstOrDefault(balance => balance.AssetType == new AssetTypeNative().GetType())?.BalanceString;
             return GetValue(value);
         }
 
-        public async Task SubmitPaymentAsync(string destinationAddress, decimal amount)
+        public async Task<string> SubmitHotWalletWithdrawalAsync(string destinationAddress, decimal amount)
         {
             var hotWalletAccout = await _server.Accounts.Account(_hotWallet);
-            var account = new Account(_hotWallet, hotWalletAccout.IncrementedSequenceNumber);
+            var account = new Account(_hotWallet, hotWalletAccout.SequenceNumber);
             var transaction = new Transaction.Builder(account)
                 .AddOperation(new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAddress),
                     new AssetTypeNative(),
@@ -59,12 +61,34 @@ namespace Tradeio.Stellar
             transaction.Sign(_hotWallet);
             var result = await _server.SubmitTransaction(transaction);
             if (!result.IsSuccess())
-                throw new StellarClientException("Failed to submit transaction to blockchain");
+                throw new StellarServiceException(
+                    $"Failed to submit transaction to blockchain: error {result.SubmitTransactionResponseExtras.ExtrasResultCodes.TransactionResultCode}");
+            return result.Hash;
+        }
+
+        public async Task<string> SubmitColdWalletWithdrawalAsync(string destinationAddress, decimal amount, string[] secrets)
+        {
+            var coldWalletAccount = await _server.Accounts.Account(_coldWallet);
+            var account = new Account(_coldWallet, coldWalletAccount.SequenceNumber);
+            var transaction = new Transaction.Builder(account)
+                .AddOperation(new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAddress),
+                    new AssetTypeNative(),
+                    GetString(amount)).Build())
+                .Build();
+            foreach (var signature in secrets)
+            {
+                transaction.Sign(KeyPair.FromSecretSeed(signature));
+            }
+            var result = await _server.SubmitTransaction(transaction);
+            if (!result.IsSuccess())
+                throw new StellarServiceException(
+                    $"Failed to submit transaction to blockchain: error {result.SubmitTransactionResponseExtras.ExtrasResultCodes.TransactionResultCode}");
+            return result.Hash;
         }
 
         private decimal GetValue(string value)
         {
-            return Convert.ToDecimal(value);
+            return decimal.Parse(value, CultureInfo.InvariantCulture);
         }
 
         private string GetString(decimal value)

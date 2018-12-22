@@ -34,7 +34,6 @@ namespace Tradeio.Stellar.Tests
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
-
             _stellarConfigurationService = new StellarConfigurationService(configuration);
             _stellarRepositoryMock = new Mock<IStellarRepository>();
             _balanceServiceMock = new Mock<IBalanceService>();
@@ -45,6 +44,7 @@ namespace Tradeio.Stellar.Tests
             timerFactoryMock.Setup(factory => factory.Create(It.IsAny<Action>()))
                 .Returns(new Mock<ITimer>().Object)
                 .Callback<Action>(handler => _timerHandler = handler);
+
             _withdrawalProcessor = new WithdrawalProcessor(
                 _balanceServiceMock.Object,
                 _stellarRepositoryMock.Object,
@@ -62,7 +62,7 @@ namespace Tradeio.Stellar.Tests
                 .Returns(Task.FromResult(new List<WithdrawalRequest> {GetWithdrawalRequest()}.AsReadOnly()));
             _timerHandler.Invoke();
             _stellarRepositoryMock.Verify(repository =>
-                repository.ChangeWithdrawalRequestStatus(It.IsAny<WithdrawalRequest>(),
+                repository.ChangeWithdrawalRequestStatusAsync(It.IsAny<WithdrawalRequest>(),
                     It.Is<WithdrwalRequestStatus>(status => status == WithdrwalRequestStatus.Processing)));
         }
 
@@ -104,11 +104,11 @@ namespace Tradeio.Stellar.Tests
                 .Returns(1000m);
             _stellarServiceMock.Setup(client => client.GetHotWalletBalanceAsync())
                 .Returns(Task.FromResult(1000m));
-            _stellarServiceMock.Setup(service => service.SubmitPaymentAsync(It.IsAny<string>(), It.IsAny<decimal>()))
-                .Throws<StellarClientException>();
+            _stellarServiceMock.Setup(service => service.SubmitHotWalletWithdrawalAsync(It.IsAny<string>(), It.IsAny<decimal>()))
+                .Throws<StellarServiceException>();
             _timerHandler.Invoke();
             _stellarRepositoryMock.Verify(repository =>
-                repository.ChangeWithdrawalRequestStatus(It.IsAny<WithdrawalRequest>(),
+                repository.ChangeWithdrawalRequestStatusAsync(It.IsAny<WithdrawalRequest>(),
                     It.Is<WithdrwalRequestStatus>(status => status == WithdrwalRequestStatus.Error)));
         }
 
@@ -124,7 +124,7 @@ namespace Tradeio.Stellar.Tests
                 .Returns(Task.FromResult(1000m));
             _timerHandler.Invoke();
             _stellarRepositoryMock.Verify(repository =>
-                repository.ChangeWithdrawalRequestStatus(It.IsAny<WithdrawalRequest>(),
+                repository.ChangeWithdrawalRequestStatusAsync(It.IsAny<WithdrawalRequest>(),
                     It.Is<WithdrwalRequestStatus>(status => status == WithdrwalRequestStatus.Completed)));
         }
 

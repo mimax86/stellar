@@ -52,7 +52,7 @@ namespace Tradeio.Stellar.Processors
             try
             {
                 var exceedingAmount = amount - _stellarConfigurationService.HotWalletThreshold;
-                await _stellarService.SubmitPaymentAsync(_stellarConfigurationService.Cold.Public, exceedingAmount);
+                await _stellarService.SubmitHotWalletWithdrawalAsync(_stellarConfigurationService.Cold.Public, exceedingAmount);
             }
             catch (Exception e)
             {

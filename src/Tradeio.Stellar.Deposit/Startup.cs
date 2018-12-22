@@ -29,6 +29,8 @@ namespace Tradeio.Stellar.Deposit
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IBalanceService, BalanceService>();
 
+            services.AddTransient<IStellarService, StellarService>();
+
             services.AddTransient<IStellarConfigurationService, StellarConfigurationService>();
             services.AddTransient<IStellarRepository, StellarRepository>();
 

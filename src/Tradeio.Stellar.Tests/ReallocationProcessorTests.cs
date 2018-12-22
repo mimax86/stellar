@@ -35,7 +35,6 @@ namespace Tradeio.Stellar.Tests
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
-
             _stellarConfigurationService = new StellarConfigurationService(configuration);
             _stellarRepositoryMock = new Mock<IStellarRepository>();
             _balanceServiceMock = new Mock<IBalanceService>();
@@ -46,6 +45,7 @@ namespace Tradeio.Stellar.Tests
             timerFactoryMock.Setup(factory => factory.Create(It.IsAny<Action>()))
                 .Returns(new Mock<ITimer>().Object)
                 .Callback<Action>(handler => _timerHandler = handler);
+
             _reallocationProcessor = new ReallocationProcessor(
                 _balanceServiceMock.Object,
                 _stellarRepositoryMock.Object,
@@ -64,7 +64,7 @@ namespace Tradeio.Stellar.Tests
             _stellarRepositoryMock.Setup(repository => repository.GetPendingWithdrawalRequestsAsync())
                 .Returns(Task.FromResult(Enumerable.Empty<WithdrawalRequest>().ToList().AsReadOnly()));
             _timerHandler.Invoke();
-            _stellarServiceMock.Verify(service => service.SubmitPaymentAsync(It.IsAny<string>(), It.IsAny<decimal>()),
+            _stellarServiceMock.Verify(service => service.SubmitHotWalletWithdrawalAsync(It.IsAny<string>(), It.IsAny<decimal>()),
                 Times.Never);
         }
 
@@ -78,7 +78,7 @@ namespace Tradeio.Stellar.Tests
                 .Returns(Task.FromResult(Enumerable.Empty<WithdrawalRequest>().ToList().AsReadOnly()));
             _timerHandler.Invoke();
             _stellarServiceMock.Verify(
-                service => service.SubmitPaymentAsync(
+                service => service.SubmitHotWalletWithdrawalAsync(
                     It.Is<string>(value => value == _stellarConfigurationService.Cold.Public),
                     It.Is<decimal>(value =>
                         value == currentHotWalletBalance - _stellarConfigurationService.HotWalletThreshold)));
@@ -95,7 +95,7 @@ namespace Tradeio.Stellar.Tests
                 .Returns(Task.FromResult(pendingWithdrawals.AsReadOnly()));
             _timerHandler.Invoke();
             _stellarServiceMock.Verify(
-                service => service.SubmitPaymentAsync(
+                service => service.SubmitHotWalletWithdrawalAsync(
                     It.Is<string>(value => value == _stellarConfigurationService.Cold.Public),
                     It.Is<decimal>(value =>
                         value == currentHotWalletBalance - pendingWithdrawals.Sum(request => request.Amount) -
@@ -112,13 +112,13 @@ namespace Tradeio.Stellar.Tests
             _stellarRepositoryMock.Setup(repository => repository.GetPendingWithdrawalRequestsAsync())
                 .Returns(Task.FromResult(pendingWithdrawals.AsReadOnly()));
 
-            _stellarServiceMock.Setup(service => service.SubmitPaymentAsync(It.IsAny<string>(), It.IsAny<decimal>()))
+            _stellarServiceMock.Setup(service => service.SubmitHotWalletWithdrawalAsync(It.IsAny<string>(), It.IsAny<decimal>()))
                 .Throws<NullReferenceException>();
             _timerHandler.Invoke();
             _emailServiceMock.Verify(service => service.Send(It.IsAny<ReallocationFailedEmailParameters>()));
 
-            _stellarServiceMock.Setup(service => service.SubmitPaymentAsync(It.IsAny<string>(), It.IsAny<decimal>()))
-                .Throws<StellarClientException>();
+            _stellarServiceMock.Setup(service => service.SubmitHotWalletWithdrawalAsync(It.IsAny<string>(), It.IsAny<decimal>()))
+                .Throws<StellarServiceException>();
             _timerHandler.Invoke();
             _emailServiceMock.Verify(service => service.Send(It.IsAny<ReallocationFailedEmailParameters>()));
         }

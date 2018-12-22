@@ -22,6 +22,6 @@ namespace Tradeio.Stellar.Data
 
         Task<WithdrawalRequest> AddWithdrawalRequestAsync(long traderId, string address, decimal amount);
 
-        Task ChangeWithdrawalRequestStatus(WithdrawalRequest request, WithdrwalRequestStatus status);
+        Task ChangeWithdrawalRequestStatusAsync(WithdrawalRequest request, WithdrwalRequestStatus status);
     }
 }
