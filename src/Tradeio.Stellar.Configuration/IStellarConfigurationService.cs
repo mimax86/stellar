@@ -11,5 +11,7 @@
         decimal Fee { get; }
 
         int PollingInterval { get; }
+
+        decimal HotWalletThreshold { get; }
     }
 }

@@ -5,15 +5,15 @@ using stellar_dotnet_sdk.responses.operations;
 
 namespace Tradeio.Stellar
 {
-    public interface IStellarClient : IDisposable
+    public interface IStellarService : IDisposable
     {
         EventHandler<OperationResponse> ListenHotWallet(string cursor,
             EventHandler<OperationResponse> handler);
 
-        Task<TransactionResponse> GetTransaction(string transactionId);
+        Task<TransactionResponse> GetTransactionAsync(string transactionId);
 
-        decimal GetHotWalletBalance();
+        Task<decimal> GetHotWalletBalanceAsync();
 
-        void SubmitPayment(string requestAddress, decimal requestAmount);
+        Task SubmitPaymentAsync(string destinationAddress, decimal amount);
     }
 }

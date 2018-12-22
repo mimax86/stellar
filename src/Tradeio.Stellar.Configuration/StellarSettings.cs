@@ -11,5 +11,7 @@
         public decimal Fee { get; set; }
 
         public int PollingInterval { get; set; }
+
+        public decimal HotWalletThreshold { get; set; }
     }
 }

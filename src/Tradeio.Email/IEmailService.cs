@@ -1,4 +1,6 @@
-﻿namespace Tradeio.Email
+﻿using Tradeio.Email.Parameters;
+
+namespace Tradeio.Email
 {
     public interface IEmailService
     {

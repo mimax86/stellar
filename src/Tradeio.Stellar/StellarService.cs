@@ -10,13 +10,13 @@ using Tradeio.Stellar.Configuration;
 
 namespace Tradeio.Stellar
 {
-    public class StellarClient : IStellarClient
+    public class StellarService : IStellarService
     {
         private readonly IStellarConfigurationService _stellarConfigurationService;
         private readonly Server _server;
         private readonly KeyPair _hotWallet;
 
-        public StellarClient(IStellarConfigurationService stellarConfigurationService)
+        public StellarService(IStellarConfigurationService stellarConfigurationService)
         {
             _stellarConfigurationService = stellarConfigurationService;
             _server = new Server(stellarConfigurationService.HorizonUrl);
@@ -34,28 +34,30 @@ namespace Tradeio.Stellar
             return handler;
         }
 
-        public async Task<TransactionResponse> GetTransaction(string transactionId)
+        public async Task<TransactionResponse> GetTransactionAsync(string transactionId)
         {
             return await _server.Transactions.Transaction(transactionId);
         }
 
-        public decimal GetHotWalletBalance()
+        public async Task<decimal> GetHotWalletBalanceAsync()
         {
-            var value = _server.Accounts.Account(_hotWallet).Result.Balances
+            var account = await _server.Accounts.Account(_hotWallet);
+            var value = account.Balances
                 .FirstOrDefault(balance => balance.AssetCode == Asset.Lumen)?.BalanceString;
             return GetValue(value);
         }
 
-        public void SubmitPayment(string requestAddress, decimal requestAmount)
+        public async Task SubmitPaymentAsync(string destinationAddress, decimal amount)
         {
-            var sequenceNumber = _server.Accounts.Account(_hotWallet).Result.IncrementedSequenceNumber;
-            var account = new Account(_hotWallet, sequenceNumber);
+            var hotWalletAccout = await _server.Accounts.Account(_hotWallet);
+            var account = new Account(_hotWallet, hotWalletAccout.IncrementedSequenceNumber);
             var transaction = new Transaction.Builder(account)
-                .AddOperation(new PaymentOperation.Builder(KeyPair.FromAccountId(requestAddress), new AssetTypeNative(),
-                    GetString(requestAmount)).Build())
+                .AddOperation(new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAddress),
+                    new AssetTypeNative(),
+                    GetString(amount)).Build())
                 .Build();
             transaction.Sign(_hotWallet);
-            var result = _server.SubmitTransaction(transaction).Result;
+            var result = await _server.SubmitTransaction(transaction);
             if (!result.IsSuccess())
                 throw new StellarClientException("Failed to submit transaction to blockchain");
         }
