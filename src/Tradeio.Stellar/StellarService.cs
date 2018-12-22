@@ -13,13 +13,17 @@ namespace Tradeio.Stellar
     public class StellarService : IStellarService
     {
         private readonly IStellarConfigurationService _stellarConfigurationService;
+        private readonly ISecretDecoder _secretDecoder;
         private readonly Server _server;
         private readonly KeyPair _hotWallet;
         private readonly KeyPair _coldWallet;
 
-        public StellarService(IStellarConfigurationService stellarConfigurationService)
+        public StellarService(
+            IStellarConfigurationService stellarConfigurationService,
+            ISecretDecoder secretDecoder)
         {
             _stellarConfigurationService = stellarConfigurationService;
+            _secretDecoder = secretDecoder;
             _server = new Server(stellarConfigurationService.HorizonUrl);
             _hotWallet = KeyPair.FromSecretSeed(stellarConfigurationService.Hot.Secret);
             _coldWallet = KeyPair.FromAccountId(stellarConfigurationService.Cold.Public);
@@ -77,8 +81,10 @@ namespace Tradeio.Stellar
                 .Build();
             foreach (var signature in secrets)
             {
-                transaction.Sign(KeyPair.FromSecretSeed(signature));
+                var secret = _secretDecoder.Decode(signature);
+                transaction.Sign(KeyPair.FromSecretSeed(secret));
             }
+
             var result = await _server.SubmitTransaction(transaction);
             if (!result.IsSuccess())
                 throw new StellarServiceException(

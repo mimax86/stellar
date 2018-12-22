@@ -23,7 +23,7 @@ namespace Tradeio.Stellar.Tests
                 .AddJsonFile("appsettings.json")
                 .Build();
             _stellarConfigurationService = new StellarConfigurationService(configuration);
-            _stellarService = new StellarService(_stellarConfigurationService);
+            _stellarService = new StellarService(_stellarConfigurationService, new SecretDecoder());
             Network.UseTestNetwork();
         }
 
