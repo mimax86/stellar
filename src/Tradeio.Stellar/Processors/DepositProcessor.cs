@@ -31,11 +31,9 @@ namespace Tradeio.Stellar.Processors
 
         public void Start()
         {
-            var account = _stellarConfigurationService.Hot.Public;
-
             var lastCursor = _stellarRepository.GetLastCursorAsync().Result;
 
-            _stellarClient.ListenAccountOperations(account, lastCursor, (sender, response) =>
+            _stellarClient.ListenHotWallet(lastCursor, (sender, response) =>
             {
                 if (!(response is PaymentOperationResponse payment))
                     return;

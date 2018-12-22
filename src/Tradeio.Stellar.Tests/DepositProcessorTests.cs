@@ -41,9 +41,9 @@ namespace Tradeio.Stellar.Tests
             _emailServiceMock = new Mock<IEmailService>();
             _stellarRepositoryMock = new Mock<IStellarRepository>();
             _stellarClientMock = new Mock<IStellarClient>();
-            _stellarClientMock.Setup(client => client.ListenAccountOperations(It.IsAny<string>(), It.IsAny<string>(),
+            _stellarClientMock.Setup(client => client.ListenHotWallet(It.IsAny<string>(),
                     It.IsAny<EventHandler<OperationResponse>>()))
-                .Callback<string, string, EventHandler<OperationResponse>>((accont, cursor, handler) =>
+                .Callback<string, EventHandler<OperationResponse>>((cursor, handler) =>
                     _operationHandler = handler);
 
             _depositProcessor = new DepositProcessor(
@@ -69,7 +69,7 @@ namespace Tradeio.Stellar.Tests
             _stellarClientMock.Setup(client => client.GetTransaction(It.IsAny<string>()))
                 .Returns(Task.FromResult(GetTransaction()));
             _operationHandler.Invoke(null, GetOperation());
-            _emailServiceMock.Verify(service => service.Send(It.IsAny<EmailParameters>()), Times.Exactly(1));
+            _emailServiceMock.Verify(service => service.Send(It.IsAny<EmailParameters>()), Times.Once);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace Tradeio.Stellar.Tests
             _operationHandler.Invoke(null, GetOperation());
             _stellarRepositoryMock.Verify(repository =>
                 repository.CreateTransactionAsync(It.Is<TraderAddress>(address => address == traderAddress),
-                    It.Is<decimal>(value => value == 10)));
+                    It.Is<decimal>(value => value == 10)), Times.Once);
         }
 
         private TransactionResponse GetTransaction()
@@ -104,4 +104,4 @@ namespace Tradeio.Stellar.Tests
             return new AccountMergeOperationResponse(KeyPair.Random(), KeyPair.Random());
         }
     }
-}
+}  

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Tradeio.Stellar.Data.Model;
 
@@ -18,8 +18,10 @@ namespace Tradeio.Stellar.Data
 
         Task AddCursorAsync(string cursor);
 
-        Task<IReadOnlyCollection<WithdrawalRequest>> GetWithdrawalRequests();
+        Task<ReadOnlyCollection<WithdrawalRequest>> GetPendingWithdrawalRequestsAsync();
 
         Task<WithdrawalRequest> AddWithdrawalRequestAsync(long traderId, string address, decimal amount);
+
+        Task ChangeWithdrawalRequestStatus(WithdrawalRequest request, WithdrwalRequestStatus status);
     }
 }

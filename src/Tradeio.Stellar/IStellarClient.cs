@@ -7,9 +7,13 @@ namespace Tradeio.Stellar
 {
     public interface IStellarClient : IDisposable
     {
-        EventHandler<OperationResponse> ListenAccountOperations(string account, string cursor,
+        EventHandler<OperationResponse> ListenHotWallet(string cursor,
             EventHandler<OperationResponse> handler);
 
         Task<TransactionResponse> GetTransaction(string transactionId);
+
+        decimal GetHotWalletBalance();
+
+        void SubmitPayment(string requestAddress, decimal requestAmount);
     }
 }

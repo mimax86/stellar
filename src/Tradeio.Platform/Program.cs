@@ -9,8 +9,8 @@ namespace Tradeio.Platform
     {
         static void Main(string[] args)
         {
-            var stellarDepositService = "";
-            var stellarWithdrawalService = "";
+            var stellarDepositService = "http://localhost:50390";
+            var stellarWithdrawalService = "http://localhost:50387";
 
             IDepositsClient depositClient =
                 new DepositsClient(new HttpClient {BaseAddress = new Uri(stellarDepositService)});

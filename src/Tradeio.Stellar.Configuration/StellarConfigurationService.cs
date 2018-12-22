@@ -18,5 +18,7 @@ namespace Tradeio.Stellar.Configuration
         public WalletSettings Cold => _settings.Cold;
 
         public decimal Fee => _settings.Fee;
+
+        public int PollingInterval => _settings.PollingInterval;
     }
 }

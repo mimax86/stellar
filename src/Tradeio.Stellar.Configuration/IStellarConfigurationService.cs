@@ -9,5 +9,7 @@
         WalletSettings Cold { get; }
 
         decimal Fee { get; }
+
+        int PollingInterval { get; }
     }
 }

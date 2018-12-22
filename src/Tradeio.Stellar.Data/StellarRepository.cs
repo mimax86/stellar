@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Tradeio.Stellar.Data.Model;
 
@@ -36,12 +36,17 @@ namespace Tradeio.Stellar.Data
             throw new System.NotImplementedException();
         }
 
-        public Task<IReadOnlyCollection<WithdrawalRequest>> GetWithdrawalRequests()
+        public Task<ReadOnlyCollection<WithdrawalRequest>> GetPendingWithdrawalRequestsAsync()
         {
             throw new System.NotImplementedException();
         }
 
         public Task<WithdrawalRequest> AddWithdrawalRequestAsync(long traderId, string address, decimal amount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task ChangeWithdrawalRequestStatus(WithdrawalRequest request, WithdrwalRequestStatus status)
         {
             throw new System.NotImplementedException();
         }
