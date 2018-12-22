@@ -15,17 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradeio.Stellar.Tests", "Tr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8E325620-2A5D-4BB6-AFB4-D9551B8FA199}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradeio.Stellar.Client", "Tradeio.Stellar.Client\Tradeio.Stellar.Client.csproj", "{8E9B3C35-CF30-4FCE-91EB-6A359E0485D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeio.Stellar.Client", "Tradeio.Stellar.Client\Tradeio.Stellar.Client.csproj", "{8E9B3C35-CF30-4FCE-91EB-6A359E0485D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalComponents", "ExternalComponents", "{D09D34CC-3F60-4FC8-98A8-1434F851E174}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradeio.Balance", "Tradeio.Balance\Tradeio.Balance.csproj", "{7EDEC51A-D7C5-46F1-A4CD-E6C1539E859B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeio.Balance", "Tradeio.Balance\Tradeio.Balance.csproj", "{7EDEC51A-D7C5-46F1-A4CD-E6C1539E859B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradeio.Email", "Tradeio.Email\Tradeio.Email.csproj", "{1848B40F-AFB2-463C-8EE4-DB3DC6EB09FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeio.Email", "Tradeio.Email\Tradeio.Email.csproj", "{1848B40F-AFB2-463C-8EE4-DB3DC6EB09FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradeio.Stellar.Data", "Tradeio.Stellar.Data\Tradeio.Stellar.Data.csproj", "{46F158CE-A2BE-4372-925D-3946F82369C6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeio.Platform", "Tradeio.Platform\Tradeio.Platform.csproj", "{79C61E8F-11C6-48E8-A2BE-ADB606E249AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,10 +67,6 @@ Global
 		{46F158CE-A2BE-4372-925D-3946F82369C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46F158CE-A2BE-4372-925D-3946F82369C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46F158CE-A2BE-4372-925D-3946F82369C6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{79C61E8F-11C6-48E8-A2BE-ADB606E249AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79C61E8F-11C6-48E8-A2BE-ADB606E249AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79C61E8F-11C6-48E8-A2BE-ADB606E249AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79C61E8F-11C6-48E8-A2BE-ADB606E249AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,7 +75,6 @@ Global
 		{DF0E1E4C-5DF4-4FDD-AC11-A07DCAE36C53} = {8E325620-2A5D-4BB6-AFB4-D9551B8FA199}
 		{7EDEC51A-D7C5-46F1-A4CD-E6C1539E859B} = {D09D34CC-3F60-4FC8-98A8-1434F851E174}
 		{1848B40F-AFB2-463C-8EE4-DB3DC6EB09FB} = {D09D34CC-3F60-4FC8-98A8-1434F851E174}
-		{79C61E8F-11C6-48E8-A2BE-ADB606E249AF} = {D09D34CC-3F60-4FC8-98A8-1434F851E174}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F77FA7-E65B-4D0A-95D0-737300744B83}
