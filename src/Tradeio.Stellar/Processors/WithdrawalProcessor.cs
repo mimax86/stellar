@@ -7,6 +7,7 @@ using Tradeio.Email;
 using Tradeio.Email.Parameters;
 using Tradeio.Stellar.Configuration;
 using Tradeio.Stellar.Data;
+using Tradeio.Stellar.Data.Enum;
 using Tradeio.Stellar.Data.Model;
 using Tradeio.Stellar.Processors.Timing;
 

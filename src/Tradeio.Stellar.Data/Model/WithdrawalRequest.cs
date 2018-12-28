@@ -1,4 +1,6 @@
-﻿namespace Tradeio.Stellar.Data.Model
+﻿using Tradeio.Stellar.Data.Enum;
+
+namespace Tradeio.Stellar.Data.Model
 {
     public class WithdrawalRequest
     {

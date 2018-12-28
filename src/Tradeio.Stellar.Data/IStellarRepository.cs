@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Tradeio.Stellar.Data.Enum;
 using Tradeio.Stellar.Data.Model;
 
 namespace Tradeio.Stellar.Data

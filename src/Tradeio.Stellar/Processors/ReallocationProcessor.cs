@@ -31,7 +31,7 @@ namespace Tradeio.Stellar.Processors
             _stellarConfigurationService = stellarConfigurationService;
             _emailService = emailService;
             _timer = timerFactory.Create(ProcessReallocation);
-            _logger = loggerFactory.CreateLogger<WithdrawalProcessor>();
+            _logger = loggerFactory.CreateLogger<ReallocationProcessor>();
         }
 
         public void Start()

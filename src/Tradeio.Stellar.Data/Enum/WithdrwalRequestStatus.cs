@@ -1,4 +1,4 @@
-﻿namespace Tradeio.Stellar.Data.Model
+﻿namespace Tradeio.Stellar.Data.Enum
 {
     public enum WithdrwalRequestStatus
     {
